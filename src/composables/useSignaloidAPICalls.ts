@@ -16,6 +16,7 @@ type SourceCodeTaskRequest = {
   }
 }
 
+// Update this to use buildTaskAPI
 export const useSigAPIComposable = () => {
   const sigAPI = useSignaloidAPIStore()
 

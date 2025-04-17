@@ -36,6 +36,7 @@ export function useConversion() {
     )
   })
 
+  // Update this to use buildTaskAPI
   const handleSubmit = () => {
     if (isFormValid.value) {
       console.log('Form is valid:', {

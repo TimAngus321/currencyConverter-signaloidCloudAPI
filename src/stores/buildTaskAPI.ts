@@ -23,6 +23,8 @@ type TraceVariableRequest = {
   Expression: string;
 };
 
+// This store will handle the build
+
 export const useBuildTaskAPI = defineStore('buildTaskAPI', {
     state: () => ({
       sigClient: axios.create({

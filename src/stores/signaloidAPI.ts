@@ -28,6 +28,8 @@ export const TaskStatus = {
 
 export type TaskStatusType = (typeof TaskStatus)[keyof typeof TaskStatus]
 
+// This store will handle tasks and plots
+
 export const useSignaloidAPIStore = defineStore('signaloidAPI', {
   state: () => ({
     sigClient: axios.create({
