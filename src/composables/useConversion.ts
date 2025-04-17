@@ -12,7 +12,7 @@ export function useConversion() {
   const minMaxValue = computed<string>(() => (model.value ? 'GBP' : 'EUR'))
 
   // Validation for the values
-  // Removed rule that conversion rate needs to be larger than amount - brain fart.
+  // Removed rule that conversion rate needs to be larger than amount.
 
   const isAmountValid = computed<boolean>(() => {
     return amount.value !== null

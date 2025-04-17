@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { defineStore } from 'pinia'
 
+// Update new type from Signaloid docs
 type SourceCodeTaskRequest = {
   Type: 'SourceCode'
   SourceCode: {
@@ -13,6 +14,7 @@ type SourceCodeTaskRequest = {
     Core?: string
   }
 }
+
 
 export const TaskStatus = {
   Initialising: 'Initialising',
@@ -51,7 +53,7 @@ export const useSignaloidAPIStore = defineStore('signaloidAPI', {
     async createTask(taskRequest: SourceCodeTaskRequest) {
       console.log('Submitting the task to the API...')
       // clear taskOutputRes for each new request
-      this.taskOutputRes = {}
+      this.taskOutputRes = null;
       let taskPostResponse: any | undefined
       try {
         taskPostResponse = await this.sigClient.post('/tasks', taskRequest)
