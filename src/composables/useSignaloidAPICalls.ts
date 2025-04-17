@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
         Core: coreID
       }
     }
-
+    
     sigAPI.createTask(taskRequest)
   }
 
