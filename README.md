@@ -38,9 +38,10 @@ yarn dev
 
 You should then see something like: Local: <http://localhost:5173/> which you can open in your browser of choice.
 
-## Repository structure
+## To Run Tests
 
-The repository consists of the following main components:
+Use the following terminal command:
 
-- `public/`: **To fill-in more information**.
-- `src/`: **To fill-in more information**.
+```sh
+yarn test:unit src/stores/__tests__/buildTaskAPI.spec.ts run
+```

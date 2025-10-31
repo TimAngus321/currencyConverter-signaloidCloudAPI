@@ -196,5 +196,28 @@ export const useBuildTaskAPI = defineStore("buildTaskAPI", {
         console.error('Failed to generate plot:', error);
       }
     },
+    async checkTaskStatus() {
+      try {
+        if (!this.taskId) {
+          throw new Error('No task ID available');
+        }
+        
+        const taskOutputsResponse = await this.sigClient.get(
+          `/tasks/${this.taskId}/outputs?sanitized=false`
+        );
+        
+        if (taskOutputsResponse.data.Stdout) {
+          const outputStreamStdout = await axios.get(
+            taskOutputsResponse.data.Stdout
+          );
+          this.taskOutputRes = String(outputStreamStdout.data);
+          
+          // Generate plot from the output
+          await this.generatePlot();
+        }
+      } catch (error) {
+        console.error('Failed to check task status:', error);
+      }
+    },
   },
 });
