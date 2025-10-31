@@ -38,9 +38,14 @@ export const useBuildTaskAPI = defineStore("buildTaskAPI", {
     Language: null as string | null,
     CoreID: null as string | null,
     buildId: null as string | null,
+    taskId: null as string | null,
+    taskOutputRes: null as string | null,
+    plotURL: null as string | null,
   }),
   getters: {
     getBuildId: (state) => state.buildId,
+    getTaskOutputRes: (state) => state.taskOutputRes,
+    getPlotURL: (state) => state.plotURL,
   },
   actions: {
     async buildRequest(buildRequest: SourceCodeBuildRequest) {
@@ -152,7 +157,7 @@ export const useBuildTaskAPI = defineStore("buildTaskAPI", {
       try {
         // get task data from API
         taskOutputsResponse = await this.sigClient.get(
-          `/tasks/${taskID}/outputs`
+          `/tasks/${taskID}/outputs?sanitized=false`
         );
         /*
          * response.data will contain the task outputs object
@@ -162,6 +167,10 @@ export const useBuildTaskAPI = defineStore("buildTaskAPI", {
             taskOutputsResponse.data.Stdout
           );
           console.log(`Task Stdout: ${outputStreamStdout.data}`);
+          this.taskOutputRes = String(outputStreamStdout.data);
+          
+          // Generate plot from the output
+          await this.generatePlot();
         }
         if (taskOutputsResponse.data.Stderr) {
           const outputStreamStderr = await axios.get(
@@ -171,6 +180,20 @@ export const useBuildTaskAPI = defineStore("buildTaskAPI", {
         }
       } catch (error) {
         console.error(error);
+      }
+    },
+    async generatePlot() {
+      try {
+        if (!this.taskOutputRes) {
+          throw new Error('Cannot plot empty stdout');
+        }
+        const payload = "Ux" + this.taskOutputRes.split("Ux")[1];
+        const plotResponse = await this.sigClient.post('/plot', { payload: payload });
+        const plotURL = plotResponse.data.presignedURL as string;
+        console.log('Plot URL: ', plotURL);
+        this.plotURL = plotURL;
+      } catch (error) {
+        console.error('Failed to generate plot:', error);
       }
     },
   },
