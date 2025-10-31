@@ -1,7 +1,7 @@
 // Clean up pinia store by adding functions here and using them in the store
 // Use Pinia for state stuff and this for logic
 
-import { useSignaloidAPIStore } from '../stores/signaloidAPI'
+import { useSignaloidAPIStore } from '../stores/signaloidAPI';
 
 type SourceCodeTaskRequest = {
   Type: 'SourceCode'
@@ -18,7 +18,8 @@ type SourceCodeTaskRequest = {
 
 // Update this to use buildTaskAPI
 export const useSigAPIComposable = () => {
-  const sigAPI = useSignaloidAPIStore()
+  const sigAPI = useSignaloidAPIStore();
+
 
   const coreID = 'cor_b21e4de9927158c1a5b603c2affb8a09'
 
@@ -82,6 +83,7 @@ int main(int argc, char *argv[])
       }
     }
     
+
     sigAPI.createTask(taskRequest)
   }
 
