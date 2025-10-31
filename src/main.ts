@@ -13,7 +13,7 @@ import Noir from './components/presets/Noir'
 import ToggleSwitch from 'primevue/toggleswitch'
 import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'
-import Chart from 'primevue/chart'
+import Skeleton from 'primevue/skeleton'
 
 const app = createApp(App)
 app.use(createPinia())
@@ -28,6 +28,6 @@ app.use(PrimeVue, {
 app.component('Button', Button)
 app.component('ToggleSwitch', ToggleSwitch)
 app.component('InputNumber', InputNumber)
-app.component('Chart', Chart)
+app.component('Skeleton', Skeleton)
 
 app.mount('#app')

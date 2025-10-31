@@ -41,6 +41,7 @@ export const useBuildTaskAPI = defineStore("buildTaskAPI", {
     taskId: null as string | null,
     taskOutputRes: null as string | null,
     plotURL: null as string | null,
+    buildTaskStatus: "Waiting",
   }),
   getters: {
     getBuildId: (state) => state.buildId,
@@ -49,6 +50,7 @@ export const useBuildTaskAPI = defineStore("buildTaskAPI", {
   },
   actions: {
     async buildRequest(buildRequest: SourceCodeBuildRequest) {
+      this.buildTaskStatus = "Loading";
       console.log("Submitting the build to the API...");
       let buildPostResponse: any | undefined;
       try {
@@ -65,6 +67,7 @@ export const useBuildTaskAPI = defineStore("buildTaskAPI", {
          * response.data will contain the execution job response object
          */
       } catch (error) {
+        this.buildTaskStatus = "Error";
         console.error(error);
       }
 
@@ -87,6 +90,7 @@ export const useBuildTaskAPI = defineStore("buildTaskAPI", {
            * response.data will contain the task details
            */
         } catch (error) {
+          this.buildTaskStatus = "Error";
           console.error(error);
         }
       }
@@ -111,6 +115,7 @@ export const useBuildTaskAPI = defineStore("buildTaskAPI", {
           console.log("No Build property in response");
         }
       } catch (error) {
+        this.buildTaskStatus = "Error";
         console.error("Error fetching build outputs:", error);
       }
 
@@ -127,6 +132,7 @@ export const useBuildTaskAPI = defineStore("buildTaskAPI", {
          * response.data will contain the execution job response object
          */
       } catch (error) {
+        this.buildTaskStatus = "Error";
         console.error(error);
       }
 
@@ -146,6 +152,7 @@ export const useBuildTaskAPI = defineStore("buildTaskAPI", {
            * response.data will contain the task details
            */
         } catch (error) {
+          this.buildTaskStatus = "Error";
           console.error(error);
         }
       }
@@ -179,6 +186,7 @@ export const useBuildTaskAPI = defineStore("buildTaskAPI", {
           console.log(`Task Stderr: ${outputStreamStderr.data}`);
         }
       } catch (error) {
+        this.buildTaskStatus = "Error";
         console.error(error);
       }
     },
@@ -192,7 +200,9 @@ export const useBuildTaskAPI = defineStore("buildTaskAPI", {
         const plotURL = plotResponse.data.presignedURL as string;
         console.log('Plot URL: ', plotURL);
         this.plotURL = plotURL;
+        this.buildTaskStatus = "Completed"
       } catch (error) {
+        this.buildTaskStatus = "Error";
         console.error('Failed to generate plot:', error);
       }
     },
@@ -216,6 +226,7 @@ export const useBuildTaskAPI = defineStore("buildTaskAPI", {
           await this.generatePlot();
         }
       } catch (error) {
+        this.buildTaskStatus = "Error";
         console.error('Failed to check task status:', error);
       }
     },

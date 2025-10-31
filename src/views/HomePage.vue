@@ -9,7 +9,7 @@ import RawDistResults from '../components/RawDistResults.vue'
       <CurrencyConverter />
     </div>
     <div>
-      <RawDistResults />
+      <RawDistResults chart-size="80%"/>
     </div>
   </div>
 </template>
