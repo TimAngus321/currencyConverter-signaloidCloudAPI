@@ -28,7 +28,7 @@ type TraceVariableRequest = {
 export const useBuildTaskAPI = defineStore("buildTaskAPI", {
   state: () => ({
     sigClient: axios.create({
-      baseURL: "https://api.signaloid.io",
+      baseURL: "/api",
       headers: {
         Authorization: import.meta.env.VITE_SIGNALOID_API_KEY,
         "Content-Type": "application/json",
@@ -37,7 +37,6 @@ export const useBuildTaskAPI = defineStore("buildTaskAPI", {
     Code: null as string | null,
     Language: null as string | null,
     CoreID: null as string | null,
-    buildPostResponse: null as any | null,
     buildId: null as string | null,
   }),
   getters: {
@@ -46,15 +45,15 @@ export const useBuildTaskAPI = defineStore("buildTaskAPI", {
   actions: {
     async buildRequest(buildRequest: SourceCodeBuildRequest) {
       console.log("Submitting the build to the API...");
-      // let buildPostResponse: null as string | null;
+      let buildPostResponse: any | undefined;
       try {
-        this.buildPostResponse = await this.sigClient.post(
+        buildPostResponse = await this.sigClient.post(
           "/sourcecode/builds",
           buildRequest
         );
-        if (this.buildPostResponse.data.BuildID) {
+        if (buildPostResponse.data.BuildID) {
           console.log(
-            `...build successfully created with ID: ${this.buildPostResponse.data.BuildID}`
+            `...build successfully created with ID: ${buildPostResponse.data.BuildID}`
           );
         }
         /*
@@ -64,7 +63,7 @@ export const useBuildTaskAPI = defineStore("buildTaskAPI", {
         console.error(error);
       }
 
-      let buildID = this.buildPostResponse.data.BuildID;
+      let buildID = buildPostResponse.data.BuildID;
       let buildStatus = "Accepted";
 
       const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
@@ -76,7 +75,7 @@ export const useBuildTaskAPI = defineStore("buildTaskAPI", {
             `/builds/${buildID}`
           );
           buildStatus = buildGetResponse.data.Status;
-          if (this.buildPostResponse.data.BuildID) {
+          if (buildPostResponse.data.BuildID) {
             console.log(`...build status : ${buildStatus}`);
           }
           /*
@@ -96,15 +95,82 @@ export const useBuildTaskAPI = defineStore("buildTaskAPI", {
         buildOutputsResponse = await this.sigClient.get(
           `/builds/${buildID}/outputs`
         );
+        console.log("Build outputs response:", buildOutputsResponse.data);
         /*
          * response.data will contain the task outputs object
          */
         if (buildOutputsResponse.data.Build) {
           const outputStream = await axios.get(buildOutputsResponse.data.Build);
           console.log(`Build log: ${outputStream.data}`);
+        } else {
+          console.log("No Build property in response");
         }
       } catch (error) {
-        // [TODO]: handle errors
+        console.error("Error fetching build outputs:", error);
+      }
+
+      console.log("Submitting the task to the API...");
+      let taskPostResponse;
+      try {
+        taskPostResponse = await this.sigClient.post(`builds/${buildID}/tasks`);
+        if (taskPostResponse.data.TaskID) {
+          console.log(
+            `...task successfully created with ID: ${taskPostResponse.data.TaskID}`
+          );
+        }
+        /*
+         * response.data will contain the execution job response object
+         */
+      } catch (error) {
+        console.error(error);
+      }
+
+      let taskID = taskPostResponse?.data.TaskID;
+      let taskStatus = taskPostResponse?.data.Status;
+
+      console.log("Waiting for the task to finish...");
+      while (![`Completed`, `Cancelled`, `Stopped`].includes(taskStatus)) {
+        await delay(2000);
+        try {
+          const taskGetResponse = await this.sigClient.get(`/tasks/${taskID}`);
+          taskStatus = taskGetResponse.data.Status;
+          if (taskPostResponse?.data.TaskID) {
+            console.log(`...task status : ${taskStatus}`);
+          }
+          /*
+           * response.data will contain the task details
+           */
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      console.log(`Task in terminal state : ${taskStatus}.`);
+
+      console.log("Fetching task outputs...");
+      let taskOutputsResponse;
+      try {
+        // get task data from API
+        taskOutputsResponse = await this.sigClient.get(
+          `/tasks/${taskID}/outputs`
+        );
+        /*
+         * response.data will contain the task outputs object
+         */
+        if (taskOutputsResponse.data.Stdout) {
+          const outputStreamStdout = await axios.get(
+            taskOutputsResponse.data.Stdout
+          );
+          console.log(`Task Stdout: ${outputStreamStdout.data}`);
+        }
+        if (taskOutputsResponse.data.Stderr) {
+          const outputStreamStderr = await axios.get(
+            taskOutputsResponse.data.Stderr
+          );
+          console.log(`Task Stderr: ${outputStreamStderr.data}`);
+        }
+      } catch (error) {
+        console.error(error);
       }
     },
   },

@@ -1,8 +1,11 @@
 import { ref, computed } from 'vue'
 import { useSigAPIComposable } from '@/composables/useSignaloidAPICalls'
+import { useBuildTaskAPI } from '../stores/buildTaskAPI'
+import { useCreateBuild } from './useCreateBuild'
 
 export function useConversion() {
   const { prepCreateTask } = useSigAPIComposable()
+  const { buildTask } = useCreateBuild()
 
   const model = ref<boolean>(false)
   const amount = ref<number | null>(null)
@@ -44,7 +47,7 @@ export function useConversion() {
         minValue: minValue.value,
         maxValue: maxValue.value
       })
-      prepCreateTask(amount.value, minValue.value, maxValue.value)
+      buildTask(amount.value, minValue.value, maxValue.value)
     } else {
       console.log('Form is invalid.')
       alert('Please provide the amount, minValue and maxValue as described')
