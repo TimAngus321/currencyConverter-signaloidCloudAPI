@@ -13,17 +13,16 @@ const isTaskOutputEmpty = computed(() => {
   return taskOutputRes === null
 })
 
-console.log(`plot url: ${buildTaskStore.plotURL}`)
 </script>
 
 <template>
-  <ComponentTitle title="Raw Distribution Results Here" />
-  <output v-if="!isTaskOutputEmpty">
+  <ComponentTitle title="Distribution Result Here" />
+  <output v-if="!isTaskOutputEmpty" class="flex justify-start">
     <img
       v-if="buildTaskStore.plotURL"
       :src="buildTaskStore.plotURL"
       alt="Plot Image"
-      style="max-width: 512px; padding: 0; margin: 0; border-radius: 0;"
+      style="max-width: 80%; padding: 0; margin: 0; border-radius: 0;"
     />
   </output>
   <output v-else>No results available.</output>
