@@ -1,8 +1,8 @@
 import { ref, computed } from 'vue'
-import { useSigAPIComposable } from '@/composables/useSignaloidAPICalls'
+import { useCreateBuild } from './useCreateBuild'
 
 export function useConversion() {
-  const { prepCreateTask } = useSigAPIComposable()
+  const { buildTask } = useCreateBuild()
 
   const model = ref<boolean>(false)
   const amount = ref<number | null>(null)
@@ -12,7 +12,7 @@ export function useConversion() {
   const minMaxValue = computed<string>(() => (model.value ? 'GBP' : 'EUR'))
 
   // Validation for the values
-  // Removed rule that conversion rate needs to be larger than amount - brain fart.
+  // Removed rule that conversion rate needs to be larger than amount.
 
   const isAmountValid = computed<boolean>(() => {
     return amount.value !== null
@@ -36,6 +36,7 @@ export function useConversion() {
     )
   })
 
+  // Update this to use buildTaskAPI
   const handleSubmit = () => {
     if (isFormValid.value) {
       console.log('Form is valid:', {
@@ -43,7 +44,7 @@ export function useConversion() {
         minValue: minValue.value,
         maxValue: maxValue.value
       })
-      prepCreateTask(amount.value, minValue.value, maxValue.value)
+      buildTask(amount.value, minValue.value, maxValue.value)
     } else {
       console.log('Form is invalid.')
       alert('Please provide the amount, minValue and maxValue as described')
