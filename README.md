@@ -5,7 +5,7 @@ The web application uses the Signaloid technology to allow its users to specify 
 The uncertainty of the conversion is modelled as a uniform distribution and users can dictate the range of the distribution.
 The web application shows the output distribution of the converted currency.
 
-You can find a deployment of the web application [here](https://candidate-project-timothy-angus.vercel.app/).
+You can find a deployment of the web application [here](https://currency-converter-signaloid-cloud.vercel.app/).
 
 ## Requirements
 
@@ -22,7 +22,7 @@ Your Node.js version must be 18.3 or higher. [Install newer version here if need
 ## Run the following commands in the terminal
 
 ```sh
-git clone git@github.com:TimAngus321/signaloid-currencyConverter-challenge.git
+git clone git@github.com:TimAngus321/currencyConverter-signaloidCloudAPI.git
 ```
 
 ```sh
